@@ -56,8 +56,9 @@ const Settings = () => {
   };
 
   return (
-    <div className="settings-page">
-      <Header title="Settings" />
+    <div className="content-area">
+      <div className="settings-page">
+        <Header title="Settings" />
 
       <div className="settings-grid">
         <div className="settings-nav">
@@ -204,7 +205,8 @@ const Settings = () => {
         </div>
       )}
     </div>
-  );
+  </div>
+);
 };
 
 export default Settings;
