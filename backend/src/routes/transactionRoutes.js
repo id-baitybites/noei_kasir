@@ -24,6 +24,13 @@ router.post('/', async (req, res, next) => {
     next(err); 
   }
 });
+ 
+router.get('/', async (req, res, next) => {
+  try {
+    const transactions = await transactionService.getRecentTransactions(req.query.limit);
+    res.json(transactions);
+  } catch (err) { next(err); }
+});
 
 router.get('/daily-summary', async (req, res, next) => {
   try {

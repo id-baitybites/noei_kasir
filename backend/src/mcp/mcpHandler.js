@@ -63,6 +63,25 @@ const tools = {
     run: async (args) => {
       return await transactionService.createTransaction(args);
     }
+  },
+  generateRestockReport: {
+    description: "Identify low stock products and suggest restock quantities",
+    schema: {
+      type: "object",
+      properties: {
+        threshold: { type: "number", default: 10 }
+      }
+    },
+    run: async (args) => {
+      const lowStock = await productService.getLowStockProducts(args.threshold);
+      return lowStock.map(p => ({
+        id: p.id,
+        name: p.name,
+        currentStock: p.stock,
+        suggestedRestock: Math.max(0, 50 - p.stock),
+        priority: p.stock <= 5 ? 'High' : 'Medium'
+      }));
+    }
   }
 };
 

@@ -45,6 +45,6 @@ CREATE TABLE IF NOT EXISTS users (
 );
 
 -- Initial Indexes
-CREATE INDEX idx_products_name ON products(name);
-CREATE INDEX idx_transactions_created_at ON transactions(created_at);
-CREATE INDEX idx_transaction_items_transaction_id ON transaction_items(transaction_id);
+CREATE INDEX IF NOT EXISTS idx_products_name ON products(name);
+CREATE INDEX IF NOT EXISTS idx_transactions_created_at ON transactions(created_at);
+CREATE INDEX IF NOT EXISTS idx_transaction_items_transaction_id ON transaction_items(transaction_id);

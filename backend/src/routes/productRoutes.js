@@ -13,7 +13,12 @@ const productSchema = z.object({
 
 router.get('/', async (req, res, next) => {
   try {
-    const products = await productService.getAllProducts();
+    let products;
+    if (req.query.low_stock) {
+      products = await productService.getLowStockProducts(req.query.threshold);
+    } else {
+      products = await productService.getAllProducts();
+    }
     res.json(products);
   } catch (err) { next(err); }
 });

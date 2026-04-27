@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { productApi, transactionApi } from '../api';
-import { Search, Plus, Minus, Trash2, CreditCard, Banknote } from 'lucide-react';
+import { Search, Plus, Minus, Trash2, CreditCard, Banknote, ShoppingCart } from 'lucide-react';
 
 const POS = () => {
   const [products, setProducts] = useState([]);

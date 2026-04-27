@@ -85,6 +85,18 @@ class TransactionService {
     );
     return rows[0];
   }
+
+  async getRecentTransactions(limit = 10) {
+    const { rows } = await db.query(
+      `SELECT t.*, 
+              (SELECT JSON_AGG(ti.*) FROM transaction_items ti WHERE ti.transaction_id = t.id) as items
+       FROM transactions t 
+       ORDER BY t.created_at DESC 
+       LIMIT $1`,
+      [limit]
+    );
+    return rows;
+  }
 }
 
 module.exports = new TransactionService();
