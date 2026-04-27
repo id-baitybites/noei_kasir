@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { userApi, authApi } from '../api';
-import { User, Shield, Users, Plus, Trash2, X } from 'lucide-react';
+import { User, Shield, Users, Plus, Trash2, X, Bell } from 'lucide-react';
 import Header from '../components/Header';
 import '../styles/Settings.scss';
 
