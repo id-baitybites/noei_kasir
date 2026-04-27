@@ -122,20 +122,22 @@ const POS = () => {
           </div>
         </header>
 
-        <div className="category-tabs">
-          {categories.map(cat => (
-            <button
-              key={cat}
-              onClick={() => setActiveCategory(cat)}
-              className={`tab ${activeCategory === cat ? 'active' : ''}`}
-            >
-              {cat === 'All' ? 'All Items' : cat}
-              <span className="count">{getCategoryCount(cat)}</span>
-            </button>
-          ))}
-          <div style={{ marginLeft: 'auto' }}>
-            <Search size={20} color="#6b7280" />
+        <div className="category-row">
+          <div className="category-tabs">
+            {categories.map(cat => (
+              <button
+                key={cat}
+                onClick={() => setActiveCategory(cat)}
+                className={`tab ${activeCategory === cat ? 'active' : ''}`}
+              >
+                {cat === 'All' ? 'All Items' : cat}
+                <span className="count">{getCategoryCount(cat)}</span>
+              </button>
+            ))}
           </div>
+          <button className="search-toggle">
+            <Search size={20} color="#6b7280" />
+          </button>
         </div>
 
         <div className="product-grid">

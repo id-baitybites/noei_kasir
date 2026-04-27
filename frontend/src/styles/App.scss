@@ -88,10 +88,15 @@ body {
 
     .nav-link {
       color: rgba(255, 255, 255, 0.4);
-      padding: 0.75rem;
-      border-radius: 0.75rem;
+      padding: 1rem;
+      border-radius: 1rem;
       transition: $transition-base;
       cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 44px;
+      min-height: 44px;
 
       &:hover, &.active {
         color: white;
@@ -173,9 +178,15 @@ body {
 
       .notification-bell {
         background: #f3f4f6;
-        padding: 0.5rem;
+        padding: 0.75rem;
         border-radius: 50%;
         color: $text-muted;
+        min-width: 44px;
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
       }
 
       .user-profile {
@@ -183,8 +194,10 @@ body {
         align-items: center;
         gap: 0.75rem;
         background: #f3f4f6;
-        padding: 0.25rem 1rem 0.25rem 0.25rem;
+        padding: 0.5rem 1.25rem 0.5rem 0.5rem;
         border-radius: 2rem;
+        min-height: 44px;
+        cursor: pointer;
 
         @media (max-width: 640px) {
             padding: 0.25rem;
@@ -214,52 +227,77 @@ body {
   }
 }
 
-// Category Tabs
-.category-tabs {
+// Category Row
+.category-row {
   display: flex;
-  gap: 1rem;
+  align-items: center;
+  gap: 1.5rem;
   margin-bottom: 2.5rem;
-  overflow-x: auto;
-  padding-bottom: 0.5rem;
-  scrollbar-width: none;
-  &::-webkit-scrollbar { display: none; }
+  border-bottom: 1px solid #f3f4f6;
 
-  .tab {
+  .category-tabs {
+    flex: 1;
     display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.6rem 1.25rem;
-    border-radius: 2rem;
-    border: 1px solid #e5e7eb;
-    background: transparent;
-    color: $text-muted;
-    font-weight: 600;
-    font-size: 0.875rem;
-    cursor: pointer;
-    transition: $transition-base;
-    white-space: nowrap;
+    gap: 1.5rem;
+    overflow-x: auto;
+    padding: 0.5rem 0 1rem 0;
+    scrollbar-width: none;
+    &::-webkit-scrollbar { display: none; }
 
-    .count {
-      background: #f3f4f6;
-      padding: 0.1rem 0.6rem;
-      border-radius: 1rem;
-      font-size: 0.75rem;
-    }
-
-    &:hover {
-      border-color: $primary-color;
-      color: $primary-color;
-    }
-
-    &.active {
-      background: $bg-sidebar;
-      color: white;
-      border-color: $bg-sidebar;
+    .tab {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.5rem;
+      border-radius: 2.5rem;
+      border: 1px solid transparent;
+      background: transparent;
+      color: $text-muted;
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: $transition-base;
+      white-space: nowrap;
+      min-height: 44px;
 
       .count {
-        background: $primary-color;
-        color: white;
+        background: #f3f4f6;
+        padding: 0.1rem 0.6rem;
+        border-radius: 1rem;
+        font-size: 0.75rem;
       }
+
+      &:hover {
+        color: $primary-color;
+      }
+
+      &.active {
+        background: $bg-sidebar;
+        color: white;
+
+        .count {
+          background: $primary-color;
+          color: white;
+        }
+      }
+    }
+  }
+
+  .search-toggle {
+    background: #f3f4f6;
+    border: none;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: $transition-base;
+
+    &:hover {
+      background: #e5e7eb;
     }
   }
 }
