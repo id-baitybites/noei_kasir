@@ -17,14 +17,21 @@ app.get('/health', (req, res) => res.json({ status: 'ok', timestamp: new Date() 
 app.post('/mcp', handleMcpRequest);
 app.get('/mcp/tools', getToolDefinitions);
 
+const { authenticate, authorize } = require('./middleware/authMiddleware');
+
 // API Routes
+app.use('/api/auth', require('./routes/authRoutes'));
+
 const productRoutes = require('./routes/productRoutes');
 const transactionRoutes = require('./routes/transactionRoutes');
 
-app.use('/api/products', productRoutes);
-app.use('/products', productRoutes);
-app.use('/api/transactions', transactionRoutes);
-app.use('/transactions', transactionRoutes);
+// Products: super-admin, stock-admin can manage. store-admin, cashier can view.
+app.use('/api/products', authenticate, productRoutes);
+app.use('/products', authenticate, productRoutes);
+
+// Transactions: all authenticated users can create, but maybe only super-admin/store-admin can view history.
+app.use('/api/transactions', authenticate, transactionRoutes);
+app.use('/transactions', authenticate, transactionRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

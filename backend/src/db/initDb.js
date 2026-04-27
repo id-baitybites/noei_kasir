@@ -9,6 +9,20 @@ async function initDb() {
   try {
     console.log('Initializing database...');
     await db.query(schema);
+    
+    // Create default super-admin if no users exist
+    const userCheck = await db.query('SELECT id FROM users LIMIT 1');
+    if (userCheck.rows.length === 0) {
+      console.log('No users found. Creating default super-admin...');
+      const bcrypt = require('bcryptjs');
+      const hashedPassword = await bcrypt.hash('admin123', 10);
+      await db.query(
+        'INSERT INTO users (username, password_hash, role) VALUES ($1, $2, $3)',
+        ['admin', hashedPassword, 'super-admin']
+      );
+      console.log('Default super-admin created: admin / admin123');
+    }
+
     console.log('Database initialized successfully.');
     process.exit(0);
   } catch (err) {

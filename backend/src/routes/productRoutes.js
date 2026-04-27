@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const productService = require('../services/productService');
 const { z } = require('zod');
+const { authorize } = require('../middleware/authMiddleware');
 
 const productSchema = z.object({
   name: z.string().min(1),
@@ -23,7 +24,7 @@ router.get('/', async (req, res, next) => {
   } catch (err) { next(err); }
 });
 
-router.post('/', async (req, res, next) => {
+router.post('/', authorize(['super-admin', 'stock-admin', 'store-admin']), async (req, res, next) => {
   try {
     const validatedData = productSchema.parse(req.body);
     const product = await productService.createProduct(validatedData);
@@ -39,7 +40,7 @@ router.get('/:id', async (req, res, next) => {
   } catch (err) { next(err); }
 });
 
-router.put('/:id', async (req, res, next) => {
+router.put('/:id', authorize(['super-admin', 'stock-admin', 'store-admin']), async (req, res, next) => {
   try {
     const validatedData = productSchema.parse(req.body);
     const product = await productService.updateProduct(req.params.id, validatedData);
@@ -47,7 +48,7 @@ router.put('/:id', async (req, res, next) => {
   } catch (err) { next(err); }
 });
 
-router.delete('/:id', async (req, res, next) => {
+router.delete('/:id', authorize(['super-admin', 'stock-admin', 'store-admin']), async (req, res, next) => {
   try {
     await productService.deleteProduct(req.params.id);
     res.status(204).end();

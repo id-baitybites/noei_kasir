@@ -132,6 +132,9 @@ const Products = () => {
   const [editingProduct, setEditingProduct] = useState(null);
   const [activeCategory, setActiveCategory] = useState('All');
 
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
+  const canManage = ['super-admin', 'stock-admin'].includes(user.role);
+
   useEffect(() => {
     fetchProducts();
   }, []);
@@ -220,10 +223,12 @@ const Products = () => {
             >
               {categories.map(cat => <option key={cat} value={cat}>{cat}</option>)}
             </select>
-            <button onClick={handleCreate} className="add-btn">
-              <Plus size={20} />
-              Add Product
-            </button>
+            {canManage && (
+              <button onClick={handleCreate} className="add-btn">
+                <Plus size={20} />
+                Add Product
+              </button>
+            )}
           </div>
         </div>
 
@@ -235,13 +240,13 @@ const Products = () => {
                 <th>Category</th>
                 <th>Price</th>
                 <th>Stock</th>
-                <th style={{ textAlign: 'right' }}>Actions</th>
+                {canManage && <th style={{ textAlign: 'right' }}>Actions</th>}
               </tr>
             </thead>
             <tbody>
               {filteredProducts.length === 0 ? (
                 <tr>
-                  <td colSpan="5" style={{ textAlign: 'center', padding: '4rem 0', color: '#9ca3af' }}>
+                  <td colSpan={canManage ? "5" : "4"} style={{ textAlign: 'center', padding: '4rem 0', color: '#9ca3af' }}>
                     <Package size={48} style={{ opacity: 0.2, marginBottom: '1rem' }} />
                     <p>No products found. Add some to get started.</p>
                   </td>
@@ -264,14 +269,16 @@ const Products = () => {
                         {product.stock} in stock
                       </span>
                     </td>
-                    <td className="action-buttons">
-                      <button onClick={() => handleEdit(product)} className="edit">
-                        <Edit size={18} />
-                      </button>
-                      <button onClick={() => handleDelete(product.id)} className="delete">
-                        <Trash2 size={18} />
-                      </button>
-                    </td>
+                    {canManage && (
+                      <td className="action-buttons">
+                        <button onClick={() => handleEdit(product)} className="edit">
+                          <Edit size={18} />
+                        </button>
+                        <button onClick={() => handleDelete(product.id)} className="delete">
+                          <Trash2 size={18} />
+                        </button>
+                      </td>
+                    )}
                   </tr>
                 ))
               )}

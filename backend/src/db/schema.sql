@@ -40,7 +40,7 @@ CREATE TABLE IF NOT EXISTS users (
     id SERIAL PRIMARY KEY,
     username VARCHAR(100) UNIQUE NOT NULL,
     password_hash TEXT NOT NULL,
-    role VARCHAR(20) NOT NULL DEFAULT 'cashier', -- admin, cashier, ai_agent
+    role VARCHAR(20) NOT NULL DEFAULT 'cashier', -- super-admin, stock-admin, store-admin, cashier
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
