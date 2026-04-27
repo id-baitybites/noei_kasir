@@ -22,6 +22,11 @@ export const authApi = {
   register: (userData) => api.post('/auth/register', userData),
 };
 
+export const userApi = {
+  getAll: () => api.get('/users'),
+  delete: (id) => api.delete(`/users/${id}`),
+};
+
 export const productApi = {
   getAll: () => api.get('/products'),
   create: (data) => api.post('/products', data),

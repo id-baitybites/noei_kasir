@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Link, useLocation, Navigate } f
 import Dashboard from './pages/Dashboard';
 import POS from './pages/POS';
 import Products from './pages/Products';
+import SettingsPage from './pages/Settings';
 import Login from './pages/Login';
 import { LayoutDashboard, ShoppingCart, Package, BrainCircuit, History, Settings, LogOut, HelpCircle, Bell } from 'lucide-react';
 import './styles/App.scss';
@@ -53,9 +54,9 @@ const Sidebar = ({ user, onLogout }) => {
       </div>
 
       <div className="sidebar-footer">
-        <div className="nav-link">
+        <Link to="/settings" className={`nav-link ${isActive('/settings') ? 'active' : ''}`}>
           <Settings size={24} />
-        </div>
+        </Link>
         <div className="nav-link" onClick={onLogout}>
           <LogOut size={24} />
         </div>
@@ -99,6 +100,12 @@ function App() {
             <Route path="/products" element={
               <ProtectedRoute user={user} roles={['super-admin', 'stock-admin', 'store-admin']}>
                 <Products />
+              </ProtectedRoute>
+            } />
+
+            <Route path="/settings" element={
+              <ProtectedRoute user={user}>
+                <SettingsPage />
               </ProtectedRoute>
             } />
 
