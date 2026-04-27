@@ -20,7 +20,9 @@ app.get('/mcp/tools', getToolDefinitions);
 const { authenticate, authorize } = require('./middleware/authMiddleware');
 
 // API Routes
-app.use('/api/auth', require('./routes/authRoutes'));
+const authRoutes = require('./routes/authRoutes');
+app.use('/api/auth', authRoutes);
+app.use('/auth', authRoutes);
 
 const productRoutes = require('./routes/productRoutes');
 const transactionRoutes = require('./routes/transactionRoutes');
