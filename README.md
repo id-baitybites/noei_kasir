@@ -54,16 +54,20 @@ The backend exposes an MCP-compatible endpoint at `/mcp`.
 
 ## Deployment
 
-### Render (Backend)
-1. Connect GitHub repo.
-2. Root directory: `backend`
-3. Build Command: `npm install`
-4. Start Command: `node src/server.js`
-5. Add `DATABASE_URL` to Environment Variables.
+### Render (API & DB) - Recommended
+1. Use the **Blueprint** feature on Render.
+2. It will detect the `render.yaml` in the root and automatically setup the API service and environment variables.
 
 ### Netlify (Frontend)
-1. Connect GitHub repo.
+1. Connect your GitHub repo.
 2. Base directory: `frontend`
 3. Build command: `npm run build`
 4. Publish directory: `dist`
-5. Add `VITE_API_URL` (pointing to Render URL) to Environment Variables.
+5. Environment Variables: Set `VITE_API_URL` to your backend URL.
+6. **Note**: The included `netlify.toml` handles SPA routing (200 redirects to index.html).
+
+### Vercel (Backend Alternative)
+1. Import the repository as a new project.
+2. Set the root directory to `backend`.
+3. The `vercel.json` configuration will automatically handle the Express app as a serverless function.
+4. Add your `DATABASE_URL` and `JWT_SECRET` in Vercel's environment variables.
