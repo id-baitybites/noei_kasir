@@ -18,8 +18,13 @@ app.post('/mcp', handleMcpRequest);
 app.get('/mcp/tools', getToolDefinitions);
 
 // API Routes
-app.use('/api/products', require('./routes/productRoutes'));
-app.use('/api/transactions', require('./routes/transactionRoutes'));
+const productRoutes = require('./routes/productRoutes');
+const transactionRoutes = require('./routes/transactionRoutes');
+
+app.use('/api/products', productRoutes);
+app.use('/products', productRoutes);
+app.use('/api/transactions', transactionRoutes);
+app.use('/transactions', transactionRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
