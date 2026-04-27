@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { productApi } from '../api';
-import { Plus, Edit, Trash2, Package, X, Bell, ChevronDown } from 'lucide-react';
+import { Plus, Edit, Trash2, Package, X } from 'lucide-react';
+import Header from '../components/Header';
 import '../styles/Products.scss';
 
 const ProductModal = ({ isOpen, onClose, onSubmit, product }) => {
@@ -193,22 +194,7 @@ const Products = () => {
 
   return (
     <div className="content-area">
-      <header className="header">
-        <h1>Products Management</h1>
-        <div className="header-actions">
-          <div className="notification-bell">
-            <Bell size={20} />
-          </div>
-          <div className="user-profile">
-            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Admin" alt="Admin" />
-            <div className="user-info">
-              <p>Noei Admin</p>
-              <span>SUPERUSER</span>
-            </div>
-            <ChevronDown size={14} />
-          </div>
-        </div>
-      </header>
+      <Header title="Products Management" />
 
       <div className="products-page">
         <div className="page-header">

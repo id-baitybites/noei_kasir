@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { productApi, transactionApi } from '../api';
-import { Search, Plus, Minus, Trash2, CreditCard, Banknote, ShoppingCart, Bell, ChevronDown, Star, Tag, X } from 'lucide-react';
+import { Search, Plus, Minus, Trash2, CreditCard, Banknote, ShoppingCart, Star, Tag, X } from 'lucide-react';
+import Header from '../components/Header';
 import '../styles/POS.scss';
 
 const POS = () => {
@@ -89,33 +90,11 @@ const POS = () => {
     <div className="main-layout">
       {/* Center Area */}
       <div className="content-area">
-        <header className="header">
-          <h1>Checkout Order</h1>
-          <div className="header-actions">
-            <button 
-              className="notification-bell lg-hidden" 
-              onClick={() => setIsCartOpen(true)}
-            >
-              <ShoppingCart size={20} />
-              {cart.length > 0 && (
-                <span className="cart-badge">
-                  {cart.length}
-                </span>
-              )}
-            </button>
-            <div className="notification-bell">
-              <Bell size={20} />
-            </div>
-            <div className="user-profile">
-              <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Mahmoud" alt="User" />
-              <div className="user-info">
-                <p>Mahmoud Abbas</p>
-                <span>KSR-001</span>
-              </div>
-              <ChevronDown className="chevron" size={14} />
-            </div>
-          </div>
-        </header>
+        <Header 
+          title="Checkout Order" 
+          cartCount={cart.length} 
+          onCartClick={() => setIsCartOpen(true)} 
+        />
 
         <div className="category-row">
           <div className="category-tabs">

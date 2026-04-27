@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { userApi, authApi } from '../api';
-import { User, Shield, Key, Bell, Users, Plus, Trash2, X, ShieldCheck } from 'lucide-react';
+import { User, Shield, Users, Plus, Trash2, X } from 'lucide-react';
+import Header from '../components/Header';
 import '../styles/Settings.scss';
 
 const Settings = () => {
@@ -56,12 +57,7 @@ const Settings = () => {
 
   return (
     <div className="settings-page">
-      <div className="page-header">
-        <div className="title-area">
-          <h1>Settings</h1>
-          <p>Manage your store preferences and staff members</p>
-        </div>
-      </div>
+      <Header title="Settings" />
 
       <div className="settings-grid">
         <div className="settings-nav">
