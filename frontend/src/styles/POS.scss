@@ -182,10 +182,20 @@
 
       span {
         color: $text-muted;
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
       }
 
       b {
         color: $text-main;
+      }
+
+      .color-indicator {
+        width: 12px;
+        height: 12px;
+        background: $text-main;
+        border-radius: 2px;
       }
     }
   }

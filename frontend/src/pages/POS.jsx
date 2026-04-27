@@ -95,15 +95,10 @@ const POS = () => {
             <button 
               className="notification-bell lg-hidden" 
               onClick={() => setIsCartOpen(true)}
-              style={{ position: 'relative', border: 'none', cursor: 'pointer' }}
             >
               <ShoppingCart size={20} />
               {cart.length > 0 && (
-                <span style={{ 
-                  position: 'absolute', top: -5, right: -5, background: '#7c3aed', 
-                  color: 'white', borderRadius: '50%', width: 18, height: 18, 
-                  fontSize: 10, display: 'flex', alignItems: 'center', justifyContent: 'center' 
-                }}>
+                <span className="cart-badge">
                   {cart.length}
                 </span>
               )}
@@ -210,8 +205,8 @@ const POS = () => {
 
         <div className="cart-items">
           {cart.length === 0 ? (
-            <div style={{ textAlign: 'center', padding: '3rem 0', color: '#9ca3af' }}>
-              <ShoppingCart size={48} style={{ opacity: 0.2, marginBottom: '1rem' }} />
+            <div className="empty-cart">
+              <ShoppingCart size={48} />
               <p>Your cart is empty</p>
             </div>
           ) : (
@@ -228,7 +223,7 @@ const POS = () => {
                   </div>
                   <div className="options">
                     <span>Size: <b>45</b></span>
-                    <span>Color: <div style={{ width: 12, height: 12, background: '#111827', borderRadius: 2 }}></div></span>
+                    <span>Color: <div className="color-indicator"></div></span>
                   </div>
                 </div>
                 <div className="item-price-qty">
@@ -246,7 +241,7 @@ const POS = () => {
 
         <div className="checkout-summary">
           <div className="discount-banner">
-             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+             <div className="discount-info">
                 <Tag size={16} color="#7c3aed" />
                 <span>Discount 10%</span>
              </div>
