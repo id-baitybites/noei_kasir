@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { transactionApi, productApi } from '../api';
-import { DollarSign, ShoppingBag, TrendingUp, AlertTriangle, Clock, ChevronRight } from 'lucide-react';
+import { DollarSign, ShoppingBag, TrendingUp, AlertTriangle, Clock, ChevronRight, Bell, ChevronDown } from 'lucide-react';
 import { format } from 'date-fns';
+import '../styles/Dashboard.scss';
 
 const Dashboard = () => {
   const [summary, setSummary] = useState({ total_transactions: 0, total_revenue: 0 });
@@ -38,54 +39,64 @@ const Dashboard = () => {
   ];
 
   return (
-    <div className="space-y-6">
-      <header>
-        <h1 className="text-2xl font-bold text-gray-800">Dashboard</h1>
-        <p className="text-gray-500">Welcome back, Noei Kasir Admin.</p>
+    <div className="content-area">
+      <header className="header">
+        <h1>Dashboard Overview</h1>
+        <div className="header-actions">
+          <div className="notification-bell">
+            <Bell size={20} />
+          </div>
+          <div className="user-profile">
+            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Admin" alt="Admin" />
+            <div className="user-info">
+              <p>Noei Admin</p>
+              <span>SUPERUSER</span>
+            </div>
+            <ChevronDown size={14} />
+          </div>
+        </div>
       </header>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="stats-grid">
         {stats.map((stat, i) => (
-          <div key={i} className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-center gap-4">
-            <div className={`${stat.color} p-3 rounded-lg text-white`}>
-              <stat.icon className="w-6 h-6" />
+          <div key={i} className="stat-card">
+            <div className={`icon-wrapper ${stat.color}`}>
+              <stat.icon size={24} />
             </div>
-            <div>
-              <p className="text-sm text-gray-500 font-medium">{stat.label}</p>
-              <h3 className="text-2xl font-bold text-gray-800">{stat.value}</h3>
+            <div className="stat-info">
+              <p>{stat.label}</p>
+              <h3>{stat.value}</h3>
             </div>
           </div>
         ))}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-lg font-bold">Recent Transactions</h2>
-            <button className="text-indigo-600 text-sm font-medium flex items-center gap-1">
-              View All <ChevronRight className="w-4 h-4" />
-            </button>
+      <div className="dashboard-sections">
+        <div className="section-card">
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+            <h2 style={{ margin: 0 }}>Recent Transactions</h2>
+            <ChevronRight size={20} color="#6b7280" />
           </div>
-          <div className="space-y-4">
+          <div className="transaction-list">
             {recentTransactions.length === 0 ? (
-              <div className="text-center py-10 text-gray-400">
+              <div style={{ textAlign: 'center', padding: '3rem 0', color: '#9ca3af' }}>
                 <p>No transactions yet.</p>
               </div>
             ) : (
               recentTransactions.map(tx => (
-                <div key={tx.id} className="flex justify-between items-center p-3 rounded-lg hover:bg-gray-50 transition-colors border border-transparent hover:border-gray-100">
-                  <div className="flex items-center gap-3">
-                    <div className="bg-indigo-100 p-2 rounded text-indigo-600">
-                      <Clock className="w-4 h-4" />
+                <div key={tx.id} className="transaction-item">
+                  <div className="tx-info">
+                    <div className="icon">
+                      <Clock size={16} />
                     </div>
                     <div>
-                      <p className="text-sm font-bold text-gray-800">Order #{tx.id}</p>
-                      <p className="text-xs text-gray-500">{format(new Date(tx.created_at), 'HH:mm - MMM d, yyyy')}</p>
+                      <h4>Order #{tx.id}</h4>
+                      <p>{format(new Date(tx.created_at), 'HH:mm - MMM d, yyyy')}</p>
                     </div>
                   </div>
-                  <div className="text-right">
-                    <p className="text-sm font-bold text-gray-800">${parseFloat(tx.total_amount).toFixed(2)}</p>
-                    <p className="text-xs text-gray-500 uppercase">{tx.payment_method}</p>
+                  <div className="tx-amount">
+                    <h4>${parseFloat(tx.total_amount).toFixed(2)}</h4>
+                    <p>{tx.payment_method}</p>
                   </div>
                 </div>
               ))
@@ -93,32 +104,28 @@ const Dashboard = () => {
           </div>
         </div>
         
-        <div className="space-y-6">
-          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-            <h2 className="text-lg font-bold mb-4">AI Agent Insights (MCP)</h2>
-            <div className="bg-indigo-50 p-4 rounded-lg border border-indigo-100">
-              <p className="text-indigo-800 text-sm italic">
+        <div className="section-sidebar">
+          <div className="section-card">
+            <h2>AI Agent Insights (MCP)</h2>
+            <div className="mcp-insight-card">
+              <p>
                 {lowStockCount > 0 
-                  ? `"You have ${lowStockCount} items with low stock. Would you like me to generate a restock report?"`
-                  : `"Inventory levels are healthy. I'll keep monitoring for any stockouts."`}
+                  ? `"You have ${lowStockCount} items with low stock. I recommend restocking soon."`
+                  : `"Inventory levels are optimal. No immediate actions required."`}
               </p>
               {lowStockCount > 0 && (
-                <div className="mt-3 flex gap-2">
-                  <button className="bg-indigo-600 text-white px-3 py-1 rounded text-xs">Generate Report</button>
-                  <button className="bg-white text-indigo-600 border border-indigo-600 px-3 py-1 rounded text-xs">Dismiss</button>
+                <div className="actions">
+                  <button className="primary">Restock Report</button>
+                  <button className="secondary">Dismiss</button>
                 </div>
               )}
             </div>
-          </div>
-
-          <div className="bg-gradient-to-br from-indigo-600 to-purple-700 p-6 rounded-xl shadow-lg text-white">
-            <h3 className="font-bold text-lg mb-2">MCP Power</h3>
-            <p className="text-indigo-100 text-sm mb-4">
-              Connect your AI agent to the MCP endpoint at <code className="bg-white bg-opacity-20 px-1 rounded">/mcp</code> to enable autonomous inventory management.
-            </p>
-            <button className="w-full py-2 bg-white text-indigo-600 rounded-lg font-bold text-sm hover:bg-indigo-50 transition-colors">
-              View MCP Docs
-            </button>
+            
+            <div className="promo-card">
+                <h3>Upgrade to Pro</h3>
+                <p>Unlock advanced AI analytics and unlimited MCP tool calls.</p>
+                <button>Learn More</button>
+            </div>
           </div>
         </div>
       </div>

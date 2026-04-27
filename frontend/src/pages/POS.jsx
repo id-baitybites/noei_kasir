@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { productApi, transactionApi } from '../api';
-import { Search, Plus, Minus, Trash2, CreditCard, Banknote, ShoppingCart } from 'lucide-react';
+import { Search, Plus, Minus, Trash2, CreditCard, Banknote, ShoppingCart, Bell, ChevronDown, Star, Tag, X } from 'lucide-react';
+import '../styles/POS.scss';
 
 const POS = () => {
   const [products, setProducts] = useState([]);
   const [cart, setCart] = useState([]);
   const [search, setSearch] = useState('');
+  const [activeCategory, setActiveCategory] = useState('All');
+  const [isCartOpen, setIsCartOpen] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -23,6 +26,13 @@ const POS = () => {
     }
   };
 
+  const getCategoryCount = (category) => {
+    if (category === 'All') return products.length;
+    return products.filter(p => p.category === category).length;
+  };
+
+  const categories = ['All', ...new Set(products.map(p => p.category).filter(Boolean))];
+
   const addToCart = (product) => {
     setCart(prev => {
       const existing = prev.find(item => item.product_id === product.id);
@@ -33,10 +43,8 @@ const POS = () => {
       }
       return [...prev, { ...product, product_id: product.id, quantity: 1 }];
     });
-  };
-
-  const removeFromCart = (productId) => {
-    setCart(prev => prev.filter(item => item.product_id !== productId));
+    // Automatically open cart on mobile when item is added
+    if (window.innerWidth <= 1024) setIsCartOpen(true);
   };
 
   const updateQuantity = (productId, delta) => {
@@ -49,7 +57,10 @@ const POS = () => {
     }));
   };
 
-  const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  const discount = subtotal * 0.1;
+  const tax = subtotal * 0.05;
+  const total = subtotal - discount + tax;
 
   const handleCheckout = async (method) => {
     if (cart.length === 0) return alert('Cart is empty');
@@ -61,110 +72,205 @@ const POS = () => {
       });
       alert('Transaction Successful!');
       setCart([]);
-      fetchProducts(); // Refresh stock
+      setIsCartOpen(false);
+      fetchProducts();
     } catch (error) {
       alert('Checkout failed: ' + (error.response?.data?.error?.message || error.message));
     }
   };
 
-  const filteredProducts = products.filter(p => 
-    p.name.toLowerCase().includes(search.toLowerCase())
-  );
+  const filteredProducts = products.filter(p => {
+    const matchesSearch = p.name.toLowerCase().includes(search.toLowerCase());
+    const matchesCategory = activeCategory === 'All' || p.category === activeCategory;
+    return matchesSearch && matchesCategory;
+  });
 
   return (
-    <div className="flex flex-col lg:flex-row gap-6 h-[calc(100vh-120px)]">
-      {/* Products Selection */}
-      <div className="flex-1 flex flex-col gap-4">
-        <div className="relative">
-          <Search className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
-          <input 
-            type="text" 
-            placeholder="Search products..." 
-            className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-        </div>
-        
-        <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 overflow-y-auto pr-2">
-          {filteredProducts.map(product => (
+    <div className="main-layout">
+      {/* Center Area */}
+      <div className="content-area">
+        <header className="header">
+          <h1>Checkout Order</h1>
+          <div className="header-actions">
             <button 
-              key={product.id}
-              onClick={() => addToCart(product)}
-              disabled={product.stock <= 0}
-              className={`p-4 rounded-xl border text-left transition-all ${
-                product.stock <= 0 ? 'bg-gray-100 border-gray-200 opacity-50 cursor-not-allowed' : 'bg-white border-gray-200 hover:border-indigo-500 hover:shadow-md'
-              }`}
+              className="notification-bell lg-hidden" 
+              onClick={() => setIsCartOpen(true)}
+              style={{ position: 'relative', border: 'none', cursor: 'pointer' }}
             >
-              <h4 className="font-bold text-gray-800 line-clamp-1">{product.name}</h4>
-              <p className="text-sm text-gray-500">{product.category}</p>
-              <div className="mt-2 flex justify-between items-end">
-                <span className="text-indigo-600 font-bold">${product.price}</span>
-                <span className={`text-xs ${product.stock < 10 ? 'text-red-500 font-bold' : 'text-gray-400'}`}>
-                  Stock: {product.stock}
+              <ShoppingCart size={20} />
+              {cart.length > 0 && (
+                <span style={{ 
+                  position: 'absolute', top: -5, right: -5, background: '#7c3aed', 
+                  color: 'white', borderRadius: '50%', width: 18, height: 18, 
+                  fontSize: 10, display: 'flex', alignItems: 'center', justifyContent: 'center' 
+                }}>
+                  {cart.length}
+                </span>
+              )}
+            </button>
+            <div className="notification-bell">
+              <Bell size={20} />
+            </div>
+            <div className="user-profile">
+              <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Mahmoud" alt="User" />
+              <div className="user-info">
+                <p>Mahmoud Abbas</p>
+                <span>KSR-001</span>
+              </div>
+              <ChevronDown className="chevron" size={14} />
+            </div>
+          </div>
+        </header>
+
+        <div className="category-tabs">
+          {categories.map(cat => (
+            <button
+              key={cat}
+              onClick={() => setActiveCategory(cat)}
+              className={`tab ${activeCategory === cat ? 'active' : ''}`}
+            >
+              {cat === 'All' ? 'All Items' : cat}
+              <span className="count">{getCategoryCount(cat)}</span>
+            </button>
+          ))}
+          <div style={{ marginLeft: 'auto' }}>
+            <Search size={20} color="#6b7280" />
+          </div>
+        </div>
+
+        <div className="product-grid">
+          {filteredProducts.map(product => (
+            <div key={product.id} className="product-card">
+              <div className="image-container">
+                <img src={`https://api.dicebear.com/7.x/shapes/svg?seed=${product.name}`} alt={product.name} />
+              </div>
+              <div className="card-info">
+                <h3>{product.name}</h3>
+                <p>{product.description || "Premium quality product selected for your needs."}</p>
+              </div>
+              <div className="status-row">
+                <span className={`stock-badge ${product.stock < 10 ? 'low-stock' : 'in-stock'}`}>
+                    {product.stock < 10 ? 'Low Stock' : 'In Stock'}: {product.stock}
                 </span>
               </div>
-            </button>
+              <div className="footer-row">
+                <span className="price">${parseFloat(product.price).toFixed(2)}</span>
+                <button 
+                    onClick={() => addToCart(product)}
+                    disabled={product.stock <= 0}
+                    className="add-btn"
+                >
+                    Add To Cart
+                </button>
+              </div>
+            </div>
           ))}
         </div>
       </div>
 
-      {/* Cart / Checkout */}
-      <div className="w-full lg:w-96 bg-white rounded-xl shadow-sm border border-gray-200 flex flex-col overflow-hidden">
-        <div className="p-4 border-b border-gray-100 flex justify-between items-center">
-          <h2 className="font-bold text-gray-800 flex items-center gap-2">
-            Current Cart <span className="bg-indigo-100 text-indigo-600 px-2 py-0.5 rounded-full text-xs">{cart.length}</span>
-          </h2>
-          <button onClick={() => setCart([])} className="text-gray-400 hover:text-red-500 transition-colors">
-            <Trash2 className="w-5 h-5" />
+      {/* Right Sidebar Overlay */}
+      {isCartOpen && (
+        <div 
+          className="modal-overlay" 
+          style={{ zIndex: 999 }} 
+          onClick={() => setIsCartOpen(false)}
+        />
+      )}
+
+      {/* Right Sidebar */}
+      <div className={`order-sidebar ${isCartOpen ? 'open' : ''}`}>
+        <div className="sidebar-header">
+          <h2>Order Details</h2>
+          <button 
+            onClick={() => setIsCartOpen(false)}
+            style={{ background: 'transparent', border: 'none', cursor: 'pointer' }}
+            className="lg-hidden"
+          >
+            <X size={24} color="#6b7280" />
           </button>
+          <Plus size={20} className="md-hidden" />
         </div>
 
-        <div className="flex-1 overflow-y-auto p-4 space-y-4">
+        <div className="customer-section">
+          <div className="label-row">
+            <span>Customer Name</span>
+            <span className="add-new">+ Add New</span>
+          </div>
+          <div className="customer-picker">
+            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Mick" alt="Customer" />
+            <div className="info">
+              <p>Mick Krasinski</p>
+              <span>No loyalty points</span>
+            </div>
+            <ChevronDown size={16} />
+          </div>
+        </div>
+
+        <div className="cart-items">
           {cart.length === 0 ? (
-            <div className="text-center py-20 text-gray-400">
-              <ShoppingCart className="w-12 h-12 mx-auto mb-2 opacity-20" />
+            <div style={{ textAlign: 'center', padding: '3rem 0', color: '#9ca3af' }}>
+              <ShoppingCart size={48} style={{ opacity: 0.2, marginBottom: '1rem' }} />
               <p>Your cart is empty</p>
             </div>
           ) : (
             cart.map(item => (
-              <div key={item.product_id} className="flex justify-between items-center">
-                <div className="flex-1">
-                  <h4 className="text-sm font-bold text-gray-800">{item.name}</h4>
-                  <p className="text-xs text-gray-500">${item.price} x {item.quantity}</p>
+              <div key={item.product_id} className="cart-item">
+                <div className="item-img">
+                   <img src={`https://api.dicebear.com/7.x/shapes/svg?seed=${item.name}`} alt={item.name} />
                 </div>
-                <div className="flex items-center gap-2">
-                  <button onClick={() => updateQuantity(item.product_id, -1)} className="p-1 rounded bg-gray-100 hover:bg-gray-200"><Minus className="w-3 h-3" /></button>
-                  <span className="text-sm font-medium w-4 text-center">{item.quantity}</span>
-                  <button onClick={() => updateQuantity(item.product_id, 1)} className="p-1 rounded bg-gray-100 hover:bg-gray-200"><Plus className="w-3 h-3" /></button>
+                <div className="item-details">
+                  <h4>{item.name}</h4>
+                  <div className="meta">
+                    <span className="rating"><Star size={12} fill="currentColor" /> 4.8</span>
+                    <span>(1230)</span>
+                  </div>
+                  <div className="options">
+                    <span>Size: <b>45</b></span>
+                    <span>Color: <div style={{ width: 12, height: 12, background: '#111827', borderRadius: 2 }}></div></span>
+                  </div>
+                </div>
+                <div className="item-price-qty">
+                  <p className="price">${parseFloat(item.price).toFixed(2)}</p>
+                  <div className="qty-controls">
+                    <button onClick={() => updateQuantity(item.product_id, -1)}><Minus size={12} /></button>
+                    <span>{item.quantity}</span>
+                    <button onClick={() => updateQuantity(item.product_id, 1)}><Plus size={12} /></button>
+                  </div>
                 </div>
               </div>
             ))
           )}
         </div>
 
-        <div className="p-4 bg-gray-50 border-t border-gray-100 space-y-4">
-          <div className="flex justify-between items-center text-lg font-bold">
-            <span>Total</span>
-            <span className="text-indigo-600">${total.toFixed(2)}</span>
+        <div className="checkout-summary">
+          <div className="discount-banner">
+             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <Tag size={16} color="#7c3aed" />
+                <span>Discount 10%</span>
+             </div>
+             <span className="change-btn">Change</span>
           </div>
-          
-          <div className="grid grid-cols-2 gap-2">
-            <button 
-              onClick={() => handleCheckout('cash')}
-              className="flex items-center justify-center gap-2 py-3 bg-white border border-gray-200 rounded-lg font-bold text-gray-700 hover:bg-gray-100 transition-colors"
-            >
-              <Banknote className="w-5 h-5" />
-              Cash
-            </button>
-            <button 
-              onClick={() => handleCheckout('card')}
-              className="flex items-center justify-center gap-2 py-3 bg-indigo-600 rounded-lg font-bold text-white hover:bg-indigo-700 transition-colors shadow-sm"
-            >
-              <CreditCard className="w-5 h-5" />
-              Card / QR
-            </button>
+
+          <div className="summary-row">
+            <span>Sub Total</span>
+            <span>${subtotal.toFixed(2)}</span>
           </div>
+          <div className="summary-row discount">
+            <span>Discount (10%)</span>
+            <span>-${discount.toFixed(2)}</span>
+          </div>
+          <div className="summary-row">
+            <span>Sales Tax</span>
+            <span>${tax.toFixed(2)}</span>
+          </div>
+          <div className="summary-row total">
+            <span>Total Payment</span>
+            <span>${total.toFixed(2)}</span>
+          </div>
+
+          <button onClick={() => handleCheckout('card')} className="process-btn">
+            Process Transactions
+          </button>
         </div>
       </div>
     </div>
